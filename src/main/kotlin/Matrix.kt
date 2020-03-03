@@ -1,14 +1,18 @@
+package io.github.creativepenguin
+
 import kotlin.math.cos
 import kotlin.math.sin
 
-class Matrix(rows: Int = 4, cols: Int = 4) {
+data class Matrix(val rows: Int = 4, val cols: Int = 4) {
 
-    val matrix: Array<Array<Int>>
+    val matrix: Array<Array<Double>> = Array(rows) {Array(cols) {0.0} }
 
     init {
-        matrix = Array<Array<Int>>(rows) {i-> Array<Int>(cols) {j -> 0}}
+        matrix[0][0] = 1.0
+        matrix[1][1] = 1.0
+        matrix[2][2] = 1.0
+        matrix[3][3] = 1.0
     }
-
 
     fun makeTranslate(x: Int, y: Int, z: Int) {
         for(i in 0..cols) {
@@ -26,10 +30,64 @@ class Matrix(rows: Int = 4, cols: Int = 4) {
         }
     }
 
-    fun makeRotX(theta: Int) {
-        for(i in 0..cols) {
-            matrix[1][i] = matrix[1][i]
-        }
+    fun makeRotX(theta: Double): Matrix {
+        val tmp = Matrix()
+        tmp[1][1] = cos(theta)
+        tmp[2][2] = cos(theta)
+        tmp[2][1] = sin(theta)
+        tmp[1][2] = -sin(theta)
+        return matrixMult(tmp, this)
     }
 
+    fun makeRotY(theta: Double): Matrix {
+        val tmp = Matrix()
+        tmp[0][0] = -sin(theta)
+        tmp[2][2] = sin(theta)
+        tmp[2][1] = cos(theta)
+        tmp[0][2] = cos(theta)
+        return matrixMult(tmp, this)
+    }
+
+    fun makerotZ(theta: Double): Matrix {
+        val tmp = Matrix()
+        tmp[0][0] = cos(theta)
+        tmp[1][1] = cos(theta)
+        tmp[0][1] = -sin(theta)
+        tmp[1][0] = sin(theta)
+        return matrixMult(tmp, this)
+    }
+
+    operator fun get(index: Int):Array<Double> {
+        return matrix[index]
+    }
+
+    operator fun set(index:Int, value: Array<Double>) {
+        matrix[index] = value
+    }
+
+    operator fun times(m: Matrix):Matrix {
+        val tmp = m
+        for(row in 0..m.rows) {
+            for(col in 0..4) {
+                tmp[row][col] = (this[0][col] * m[row][0] +
+                        this[1][col] * m[row][1] +
+                        this[2][col] * m[row][2] +
+                        this[3][col] * m[row][3])
+            }
+        }
+        return tmp
+    }
+}
+
+fun matrixMult(m1: Matrix, m2: Matrix): Matrix {
+    val tmp = m2
+    for(row in 0..m2.rows) {
+        for(col in 0..4) {
+            m2[row][col] = (m1[0][col] * tmp[row][0] +
+                    m1[1][col] * tmp[row][1] +
+                    m1[2][col] * tmp[row][2] +
+                    m1[3][col] * tmp[row][3])
+        }
+    }
+    return m2
 }
