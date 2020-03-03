@@ -77,6 +77,19 @@ data class Matrix(val rows: Int = 4, val cols: Int = 4) {
         }
         return tmp
     }
+
+    override fun toString(): String {
+        var ans = "[\n"
+        for(row in matrix) {
+            ans += "\t[ "
+            for (col in matrix) {
+                ans += "$col "
+            }
+            ans += "]\n"
+        }
+        ans += "]"
+        return ans
+    }
 }
 
 fun matrixMult(m1: Matrix, m2: Matrix): Matrix {
