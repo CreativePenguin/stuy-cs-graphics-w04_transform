@@ -5,7 +5,7 @@ import kotlin.math.sin
 
 data class Matrix(val rows: Int = 4, val cols: Int = 4) {
 
-    val matrix: Array<Array<Double>> = Array(rows) {Array(cols) {0.0} }
+    val matrix: Array<Array<Double>> = Array(rows) { Array(cols) {0.0} }
 
     init {
         matrix[0][0] = 1.0
