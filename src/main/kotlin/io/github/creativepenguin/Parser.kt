@@ -9,15 +9,20 @@ private fun readFileAsLinesUsingBufferedReader(fname: String): List<String> =
     File(fname).bufferedReader().readLines()
 
 enum class ParseModes {
-    line, IDENT("ident"), MOVE("move"), ROTATE("rotate"), DISPLAY("display"), NONE
+    LINE, ident, move, rotate, NONE
 }
 
 fun parseFile(fname:String) {
     var parsemodes = ParseModes.NONE
     for (line in readFileAsLinesUsingBufferedReader(fname)) {
-        if(parsemodes == ParseModes.None) {
-            for(val in ParseModes.values()) {
-                if()
+        when(parsemodes) {
+            ParseModes.NONE -> {
+                parsemodes = ParseModes.valueOf(line.toUpperCase())
+
+            }
+            ParseModes.LINE -> {
+                println("line")
+                parsemodes = ParseModes.NONE
             }
         }
     }
