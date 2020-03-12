@@ -3,9 +3,10 @@ package io.github.creativepenguin
 import kotlin.math.cos
 import kotlin.math.sin
 
-data class Matrix(val rows: Int = 4, val cols: Int = 4) {
+data class Matrix(val cols: Int = 4) {
 
-    val matrix: Array<Array<Double>> = Array(rows) { Array(cols) {0.0} }
+    private val matrix: Array<MutableList<Double>> =
+        Array(4) { MutableList(cols) { 0.0 } }
 
     init {
         matrix[0][0] = 1.0
@@ -14,23 +15,23 @@ data class Matrix(val rows: Int = 4, val cols: Int = 4) {
         matrix[3][3] = 1.0
     }
 
-    fun makeTranslate(x: Int, y: Int, z: Int) {
-        for(i in 0..cols) {
+    fun translate(x: Int, y: Int, z: Int) {
+        for (i in 0..cols) {
             matrix[0][i] = matrix[0][i] + x
             matrix[1][i] = matrix[1][i] + y
             matrix[2][i] = matrix[2][i] + z
         }
     }
 
-    fun makeScale(x: Int, y: Int, z: Int) {
-        for(i in 0..cols) {
+    fun scale(x: Int, y: Int, z: Int) {
+        for (i in 0..cols) {
             matrix[0][i] = matrix[0][i] * x
             matrix[1][i] = matrix[1][i] * y
             matrix[2][i] = matrix[2][i] * z
         }
     }
 
-    fun makeRotX(theta: Double): Matrix {
+    fun rotX(theta: Double): Matrix {
         val tmp = Matrix()
         tmp[1][1] = cos(theta)
         tmp[2][2] = cos(theta)
@@ -39,7 +40,7 @@ data class Matrix(val rows: Int = 4, val cols: Int = 4) {
         return matrixMult(tmp, this)
     }
 
-    fun makeRotY(theta: Double): Matrix {
+    fun rotY(theta: Double): Matrix {
         val tmp = Matrix()
         tmp[0][0] = -sin(theta)
         tmp[2][2] = sin(theta)
@@ -48,7 +49,7 @@ data class Matrix(val rows: Int = 4, val cols: Int = 4) {
         return matrixMult(tmp, this)
     }
 
-    fun makerotZ(theta: Double): Matrix {
+    fun rotZ(theta: Double): Matrix {
         val tmp = Matrix()
         tmp[0][0] = cos(theta)
         tmp[1][1] = cos(theta)
@@ -57,18 +58,18 @@ data class Matrix(val rows: Int = 4, val cols: Int = 4) {
         return matrixMult(tmp, this)
     }
 
-    operator fun get(index: Int):Array<Double> {
+    operator fun get(index: Int): MutableList<Double> {
         return matrix[index]
     }
 
-    operator fun set(index:Int, value: Array<Double>) {
+    operator fun set(index: Int, value: MutableList<Double>) {
         matrix[index] = value
     }
 
-    operator fun times(m: Matrix):Matrix {
+    operator fun times(m: Matrix): Matrix {
         val tmp = m
-        for(row in 0..m.rows) {
-            for(col in 0..4) {
+        for (row in 0..m.cols) {
+            for (col in 0..4) {
                 tmp[row][col] = (this[0][col] * m[row][0] +
                         this[1][col] * m[row][1] +
                         this[2][col] * m[row][2] +
@@ -80,7 +81,7 @@ data class Matrix(val rows: Int = 4, val cols: Int = 4) {
 
     override fun toString(): String {
         var ans = "[\n"
-        for(row in matrix) {
+        for (row in matrix) {
             ans += "\t[ "
             for (col in matrix) {
                 ans += "$col "
@@ -94,8 +95,8 @@ data class Matrix(val rows: Int = 4, val cols: Int = 4) {
 
 fun matrixMult(m1: Matrix, m2: Matrix): Matrix {
     val tmp = m2
-    for(row in 0..m2.rows) {
-        for(col in 0..4) {
+    for (row in 0..m2.cols) {
+        for (col in 0..4) {
             m2[row][col] = (m1[0][col] * tmp[row][0] +
                     m1[1][col] * tmp[row][1] +
                     m1[2][col] * tmp[row][2] +
